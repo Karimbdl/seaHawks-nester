@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - {{ sonde.hostname }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Tableau de bord - {{ sonde.hostname }}</h1>
+    <p><strong>Adresse IP :</strong> {{ sonde.ip_address }}</p>
+    <p><strong>État :</strong> {% if sonde.is_connected %}Connecté{% else %}Déconnecté{% endif %}</p>
+    <p><strong>Dernier scan :</strong> {{ sonde.last_scan }}</p>
+    <p><strong>Dernière connexion :</strong> {{ sonde.last_seen }}</p>
+    <a href="{{ url_for('index') }}">Retour à la liste des sondes</a>
+</body>
+</html>

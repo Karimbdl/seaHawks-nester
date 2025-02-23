@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seahawks Nester</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Liste des Sondes</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Adresse IP</th>
+                <th>Nom de l'hôte</th>
+                <th>État</th>
+                <th>Dernier scan</th>
+                <th>Dernière connexion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sonde in sondes %}
+            <tr>
+                <td>{{ sonde.id }}</td>
+                <td>{{ sonde.ip_address }}</td>
+                <td>{{ sonde.hostname }}</td>
+                <td>
+                    {% if sonde.is_connected %}
+                        <span class="connected">Connecté</span>
+                    {% else %}
+                        <span class="disconnected">Déconnecté</span>
+                    {% endif %}
+                </td>
+                <td>{{ sonde.last_scan }}</td>
+                <td>{{ sonde.last_seen }}</td>
+                <td><a href="{{ url_for('dashboard', sonde_id=sonde.id) }}">Voir le tableau de bord</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
