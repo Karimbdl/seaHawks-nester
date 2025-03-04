@@ -98,9 +98,21 @@
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: { color: '#eee' }, // Texte de l'axe Y en clair
+                        grid: { color: '#444' }   // Grille de l'axe Y en gris foncé
+                    },
+                    x: {
+                        ticks: { color: '#eee' }, // Texte de l'axe X en clair
+                        grid: { color: '#444' }   // Grille de l'axe X en gris foncé
                     }
-                }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#eee' } // Légende en clair
+                    }
+                },
+                backgroundColor: '#1a1a1a' // Fond du graphique (peut être redondant avec le CSS, mais assure la cohérence)
             }
         });
 

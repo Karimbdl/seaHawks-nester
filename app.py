@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+import json  # Importez le module json
 
 app = Flask(__name__)
 
@@ -16,7 +17,7 @@ class Sonde(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip_address = db.Column(db.String(15), nullable=False)
     hostname = db.Column(db.String(100), nullable=False)
-    last_scan = db.Column(db.String(500), nullable=True)
+    last_scan = db.Column(db.String(500), nullable=True) # Garder en String pour JSON
     is_connected = db.Column(db.Boolean, default=False)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -26,6 +27,34 @@ class Sonde(db.Model):
 # Créer la base de données (à exécuter une seule fois)
 with app.app_context():
     db.create_all()
+
+# Route API pour recevoir les données de scan du client
+@app.route('/api/sonde', methods=['POST'])
+def receive_sonde_data():
+    data = request.get_json()
+    if not data:
+        return jsonify({"message": "Aucune donnée JSON reçue"}), 400
+
+    ip_address = data.get('ip_address')
+    hostname = data.get('hostname')
+    last_scan_json = data.get('last_scan') # Récupérer en JSON string
+
+    if not ip_address or not hostname:
+        return jsonify({"message": "Adresse IP et nom d'hôte requis"}), 400
+
+    # Trouver la sonde existante ou en créer une nouvelle
+    sonde = Sonde.query.filter_by(ip_address=ip_address).first()
+    if sonde:
+        sonde.hostname = hostname
+        sonde.last_scan = last_scan_json # Enregistrer le JSON string
+        sonde.is_connected = True
+        sonde.last_seen = datetime.utcnow()
+    else:
+        sonde = Sonde(ip_address=ip_address, hostname=hostname, last_scan=last_scan_json, is_connected=True)
+        db.session.add(sonde)
+
+    db.session.commit()
+    return jsonify({"message": "Données de sonde reçues et enregistrées"}), 201 # 201 Created
 
 # Route pour la page d'accueil avec filtres et pagination
 @app.route('/')
@@ -72,7 +101,7 @@ def dashboard():
     sondes_labels = ["Sonde 1", "Sonde 2", "Sonde 3", "Sonde 4", "Sonde 5"]
     ports_counts = [5, 10, 7, 12, 8]
 
-    # Liste des sondes
+    # Liste des sondes (maintenant depuis la base de données)
     sondes = Sonde.query.all()
 
     return render_template(
@@ -88,7 +117,7 @@ def dashboard():
         scans_counts=scans_counts,
         sondes_labels=sondes_labels,
         ports_counts=ports_counts,
-        sondes=sondes
+        sondes=sondes # Passer les sondes depuis la base de données
     )
 
 # Démarrer l'application
