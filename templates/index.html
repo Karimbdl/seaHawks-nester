@@ -48,8 +48,30 @@
                 </div>
                 <div class="sonde-details">
                     <p><strong>Adresse IP :</strong> {{ sonde.ip_address }}</p>
-                    <p><strong>Dernier scan :</strong> {{ sonde.last_scan }}</p>
-                    <p><strong>Dernier ping :</strong> {{ sonde.last_ping }}</p>
+                    <p><strong>Dernière activité :</strong> {{ sonde.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    <p><strong>Dernier scan :</strong>
+                        {% if sonde.last_scan %}
+                            <ul>
+                            {% set last_scan_data = sonde.last_scan | from_json %}
+                            {% for host, ports in last_scan_data.items() %}
+                                {% if host != 'error' %}
+                                    <li>
+                                        <strong>{{ host }}:</strong>
+                                        {% if ports %}
+                                            Ports ouverts: {{ ports | join(', ') }}
+                                        {% else %}
+                                            Aucun port ouvert détecté
+                                        {% endif %}
+                                    </li>
+                                {% else %}
+                                    <li class="scan-error"><strong>Erreur de scan:</strong> {{ ports }}</li>
+                                {% endif %}
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span class="no-scan-data">Aucune donnée de scan disponible.</span>
+                        {% endif %}
+                    </p>
                 </div>
             </div>
             {% endfor %}
@@ -70,7 +92,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2023 Seahawks Nester. Tous droits réservés.</p>
+        <p>© 2023 Seahawks Nester. Tous droits réservés.</p>
     </footer>
 </body>
 </html>

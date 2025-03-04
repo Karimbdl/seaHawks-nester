@@ -1,10 +1,14 @@
 from flask import Flask, render_template, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
-import json  # Importez le module json
+import json
+from collections import Counter
+from flask_apscheduler import APScheduler 
+
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'votre_clé_secrète_ici'  # Clé secrète pour APScheduler (important) - **À REMPLACER !**
 
 # Configuration de la base de données SQLite
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -17,16 +21,47 @@ class Sonde(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip_address = db.Column(db.String(15), nullable=False)
     hostname = db.Column(db.String(100), nullable=False)
-    last_scan = db.Column(db.String(500), nullable=True) # Garder en String pour JSON
+    last_scan = db.Column(db.String(500), nullable=True)
     is_connected = db.Column(db.Boolean, default=False)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f"<Sonde {self.hostname} ({self.ip_address})>"
 
-# Créer la base de données (à exécuter une seule fois)
-with app.app_context():
-    db.create_all()
+# Custom Jinja2 filter pour charger du JSON à partir d'une chaîne
+def from_json_filter(json_string):
+    try:
+        return json.loads(json_string) if json_string else {}  # Retourne un dict vide si None
+    except json.JSONDecodeError:
+        return {}  # Retourne un dict vide en cas d'erreur
+
+app.jinja_env.filters['from_json'] = from_json_filter  # Enregistre le filtre
+
+# Initialiser APScheduler
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+
+# Fonction pour vérifier la connexion des sondes (tâche périodique)
+def check_sonde_connections():
+    with app.app_context():
+        print("Vérification de la connexion des sondes...")
+        sondes = Sonde.query.all()
+        now = datetime.utcnow()
+        for sonde in sondes:
+            # Considérer une sonde comme déconnectée si pas de nouvelles données depuis 1 heure
+            if sonde.last_seen < now - timedelta(hours=1):
+                if sonde.is_connected:
+                    sonde.is_connected = False
+                    print(f"Sonde {sonde.hostname} ({sonde.ip_address}) marquée comme déconnectée.")
+            elif not sonde.is_connected:
+                sonde.is_connected = True
+                print(f"Sonde {sonde.hostname} ({sonde.ip_address}) réactivée.")
+        db.session.commit()
+        print("Vérification des sondes terminée.")
+
+# Planifier la tâche de vérification de connexion (toutes les minutes par exemple)
+scheduler.add_job(id='check_connections', func=check_sonde_connections, trigger='interval', minutes=1)
 
 # Route API pour recevoir les données de scan du client
 @app.route('/api/sonde', methods=['POST'])
@@ -37,16 +72,15 @@ def receive_sonde_data():
 
     ip_address = data.get('ip_address')
     hostname = data.get('hostname')
-    last_scan_json = data.get('last_scan') # Récupérer en JSON string
+    last_scan_json = data.get('last_scan')
 
     if not ip_address or not hostname:
         return jsonify({"message": "Adresse IP et nom d'hôte requis"}), 400
 
-    # Trouver la sonde existante ou en créer une nouvelle
     sonde = Sonde.query.filter_by(ip_address=ip_address).first()
     if sonde:
         sonde.hostname = hostname
-        sonde.last_scan = last_scan_json # Enregistrer le JSON string
+        sonde.last_scan = last_scan_json
         sonde.is_connected = True
         sonde.last_seen = datetime.utcnow()
     else:
@@ -54,19 +88,18 @@ def receive_sonde_data():
         db.session.add(sonde)
 
     db.session.commit()
-    return jsonify({"message": "Données de sonde reçues et enregistrées"}), 201 # 201 Created
+    return jsonify({"message": "Données de sonde reçues et enregistrées"}), 201
 
 # Route pour la page d'accueil avec filtres et pagination
 @app.route('/')
 def index():
     state_filter = request.args.get('state')
     ip_filter = request.args.get('ip')
-    page = request.args.get('page', 1, type=int)  # Numéro de page (par défaut : 1)
-    per_page = 10  # Nombre de sondes par page
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
 
     query = Sonde.query
 
-    # Appliquer les filtres
     if state_filter == "connected":
         query = query.filter(Sonde.is_connected == True)
     elif state_filter == "disconnected":
@@ -75,34 +108,42 @@ def index():
     if ip_filter:
         query = query.filter(Sonde.ip_address.contains(ip_filter))
 
-    # Pagination
     sondes = query.paginate(page=page, per_page=per_page)
     return render_template('index.html', sondes=sondes)
 
 # Route pour le tableau de bord d'une sonde
-from datetime import datetime, timedelta
-
 @app.route('/dashboard')
 def dashboard():
-    # Données factices pour l'exemple (à remplacer par vos données réelles)
-    total_scans = 120
-    connected_sondes = 8
-    total_sondes = 10
-    total_open_ports = 45
-    average_ping = 12.5  # en ms
+    sondes = Sonde.query.all()
+    total_sondes = len(sondes)
+    connected_sondes = Sonde.query.filter_by(is_connected=True).count()
 
-    last_scan_time = (datetime.utcnow() - timedelta(minutes=30)).strftime("%Y-%m-%d %H:%M:%S")
+    total_scans = total_sondes
+    total_open_ports = 0
+    ports_par_sonde = {}
+
+    for sonde in sondes:
+        if sonde.last_scan:
+            try:
+                last_scan_data = json.loads(sonde.last_scan)
+                open_ports_count = 0
+                for host_data in last_scan_data.values():
+                    if isinstance(host_data, list):
+                        open_ports_count += len(host_data)
+                total_open_ports += open_ports_count
+                ports_par_sonde[sonde.hostname] = open_ports_count
+            except json.JSONDecodeError:
+                print(f"Erreur JSON pour sonde {sonde.hostname}")
+
+    average_ping = 12.5
+    last_scan_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     last_ping_time = (datetime.utcnow() - timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-    # Données pour les graphiques
     scans_dates = ["2023-10-01", "2023-10-02", "2023-10-03", "2023-10-04", "2023-10-05"]
     scans_counts = [10, 20, 15, 25, 30]
 
-    sondes_labels = ["Sonde 1", "Sonde 2", "Sonde 3", "Sonde 4", "Sonde 5"]
-    ports_counts = [5, 10, 7, 12, 8]
-
-    # Liste des sondes (maintenant depuis la base de données)
-    sondes = Sonde.query.all()
+    sondes_labels = list(ports_par_sonde.keys())
+    ports_counts = list(ports_par_sonde.values())
 
     return render_template(
         'dashboard.html',
@@ -117,7 +158,7 @@ def dashboard():
         scans_counts=scans_counts,
         sondes_labels=sondes_labels,
         ports_counts=ports_counts,
-        sondes=sondes # Passer les sondes depuis la base de données
+        sondes=sondes
     )
 
 # Démarrer l'application
