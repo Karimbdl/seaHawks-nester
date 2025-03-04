@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 
-# Configuration de la base de données SQLite avec un chemin absolu
+# Configuration de la base de données SQLite
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db', 'seahawks.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -27,34 +27,69 @@ class Sonde(db.Model):
 with app.app_context():
     db.create_all()
 
-# Route pour la page d'accueil
+# Route pour la page d'accueil avec filtres et pagination
 @app.route('/')
 def index():
-    sondes = Sonde.query.all()
+    state_filter = request.args.get('state')
+    ip_filter = request.args.get('ip')
+    page = request.args.get('page', 1, type=int)  # Numéro de page (par défaut : 1)
+    per_page = 10  # Nombre de sondes par page
+
+    query = Sonde.query
+
+    # Appliquer les filtres
+    if state_filter == "connected":
+        query = query.filter(Sonde.is_connected == True)
+    elif state_filter == "disconnected":
+        query = query.filter(Sonde.is_connected == False)
+
+    if ip_filter:
+        query = query.filter(Sonde.ip_address.contains(ip_filter))
+
+    # Pagination
+    sondes = query.paginate(page=page, per_page=per_page)
     return render_template('index.html', sondes=sondes)
 
 # Route pour le tableau de bord d'une sonde
-@app.route('/dashboard/<int:sonde_id>')
-def dashboard(sonde_id):
-    sonde = Sonde.query.get_or_404(sonde_id)
-    return render_template('dashboard.html', sonde=sonde)
+from datetime import datetime, timedelta
 
-# API pour recevoir les données du Harvester
-@app.route('/api/sonde', methods=['POST'])
-def receive_sonde_data():
-    data = request.json
-    sonde = Sonde.query.filter_by(ip_address=data['ip_address']).first()
+@app.route('/dashboard')
+def dashboard():
+    # Données factices pour l'exemple (à remplacer par vos données réelles)
+    total_scans = 120
+    connected_sondes = 8
+    total_sondes = 10
+    total_open_ports = 45
+    average_ping = 12.5  # en ms
 
-    if not sonde:
-        sonde = Sonde(ip_address=data['ip_address'], hostname=data['hostname'])
-        db.session.add(sonde)
+    last_scan_time = (datetime.utcnow() - timedelta(minutes=30)).strftime("%Y-%m-%d %H:%M:%S")
+    last_ping_time = (datetime.utcnow() - timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-    sonde.last_scan = data['last_scan']
-    sonde.is_connected = True
-    sonde.last_seen = datetime.utcnow()
-    db.session.commit()
+    # Données pour les graphiques
+    scans_dates = ["2023-10-01", "2023-10-02", "2023-10-03", "2023-10-04", "2023-10-05"]
+    scans_counts = [10, 20, 15, 25, 30]
 
-    return jsonify({"message": "Données reçues avec succès !"}), 200
+    sondes_labels = ["Sonde 1", "Sonde 2", "Sonde 3", "Sonde 4", "Sonde 5"]
+    ports_counts = [5, 10, 7, 12, 8]
+
+    # Liste des sondes
+    sondes = Sonde.query.all()
+
+    return render_template(
+        'dashboard.html',
+        total_scans=total_scans,
+        connected_sondes=connected_sondes,
+        total_sondes=total_sondes,
+        total_open_ports=total_open_ports,
+        average_ping=average_ping,
+        last_scan_time=last_scan_time,
+        last_ping_time=last_ping_time,
+        scans_dates=scans_dates,
+        scans_counts=scans_counts,
+        sondes_labels=sondes_labels,
+        ports_counts=ports_counts,
+        sondes=sondes
+    )
 
 # Démarrer l'application
 if __name__ == '__main__':

@@ -3,41 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seahawks Nester</title>
+    <title>Seahawks Nester - Accueil</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Liste des Sondes</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Adresse IP</th>
-                <th>Nom de l'hôte</th>
-                <th>État</th>
-                <th>Dernier scan</th>
-                <th>Dernière connexion</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for sonde in sondes %}
-            <tr>
-                <td>{{ sonde.id }}</td>
-                <td>{{ sonde.ip_address }}</td>
-                <td>{{ sonde.hostname }}</td>
-                <td>
-                    {% if sonde.is_connected %}
-                        <span class="connected">Connecté</span>
-                    {% else %}
-                        <span class="disconnected">Déconnecté</span>
-                    {% endif %}
-                </td>
-                <td>{{ sonde.last_scan }}</td>
-                <td>{{ sonde.last_seen }}</td>
-                <td><a href="{{ url_for('dashboard', sonde_id=sonde.id) }}">Voir le tableau de bord</a></td>
-            </tr>
+    <header>
+        <div class="header-content">
+            <h1>Seahawks Nester</h1>
+            <p>Supervisez votre réseau en temps réel</p>
+            <a href="{{ url_for('dashboard') }}" class="dashboard-button">Tableau de bord</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Filtres -->
+        <div class="filters">
+            <form method="GET" action="{{ url_for('index') }}">
+                <div class="filter-group">
+                    <label for="state">État :</label>
+                    <select name="state" id="state">
+                        <option value="">Tous</option>
+                        <option value="connected">Connecté</option>
+                        <option value="disconnected">Déconnecté</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="ip">Adresse IP :</label>
+                    <input type="text" name="ip" id="ip" placeholder="Filtrer par IP">
+                </div>
+                <button type="submit" class="filter-button">Filtrer</button>
+            </form>
+        </div>
+
+        <!-- Cartes des sondes -->
+        <div class="sondes-grid">
+            {% for sonde in sondes.items %}
+            <div class="sonde-card">
+                <div class="sonde-header">
+                    <h2>{{ sonde.hostname }}</h2>
+                    <span class="status-badge {% if sonde.is_connected %}connected{% else %}disconnected{% endif %}">
+                        {% if sonde.is_connected %}Connecté{% else %}Déconnecté{% endif %}
+                    </span>
+                </div>
+                <div class="sonde-details">
+                    <p><strong>Adresse IP :</strong> {{ sonde.ip_address }}</p>
+                    <p><strong>Dernier scan :</strong> {{ sonde.last_scan }}</p>
+                    <p><strong>Dernier ping :</strong> {{ sonde.last_ping }}</p>
+                </div>
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if sondes.has_prev %}
+                <a href="{{ url_for('index', page=sondes.prev_num, state=request.args.get('state'), ip=request.args.get('ip')) }}" class="pagination-button">Précédent</a>
+            {% endif %}
+
+            <span class="pagination-info">Page {{ sondes.page }} sur {{ sondes.pages }}</span>
+
+            {% if sondes.has_next %}
+                <a href="{{ url_for('index', page=sondes.next_num, state=request.args.get('state'), ip=request.args.get('ip')) }}" class="pagination-button">Suivant</a>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Seahawks Nester. Tous droits réservés.</p>
+    </footer>
 </body>
 </html>

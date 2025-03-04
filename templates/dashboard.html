@@ -3,15 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de bord - {{ sonde.hostname }}</title>
+    <title>Tableau de bord - Seahawks Nester</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Tableau de bord - {{ sonde.hostname }}</h1>
-    <p><strong>Adresse IP :</strong> {{ sonde.ip_address }}</p>
-    <p><strong>État :</strong> {% if sonde.is_connected %}Connecté{% else %}Déconnecté{% endif %}</p>
-    <p><strong>Dernier scan :</strong> {{ sonde.last_scan }}</p>
-    <p><strong>Dernière connexion :</strong> {{ sonde.last_seen }}</p>
-    <a href="{{ url_for('index') }}">Retour à la liste des sondes</a>
+    <h1>Tableau de bord - Seahawks Nester</h1>
+
+    <!-- Cartes de statistiques -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h2>Scans effectués</h2>
+            <p class="stat-value">{{ total_scans }}</p>
+            <p class="stat-change">(Dernier scan : {{ last_scan_time }})</p>
+        </div>
+        <div class="stat-card">
+            <h2>Sondes connectées</h2>
+            <p class="stat-value">{{ connected_sondes }}</p>
+            <p class="stat-change">(Total : {{ total_sondes }})</p>
+        </div>
+        <div class="stat-card">
+            <h2>Ports ouverts</h2>
+            <p class="stat-value">{{ total_open_ports }}</p>
+            <p class="stat-change">(Dernier scan : {{ last_scan_time }})</p>
+        </div>
+        <div class="stat-card">
+            <h2>Latence moyenne</h2>
+            <p class="stat-value">{{ average_ping }} ms</p>
+            <p class="stat-change">(Dernier ping : {{ last_ping_time }})</p>
+        </div>
+    </div>
+
+    <!-- Graphiques -->
+    <div class="chart-container">
+        <h2>Scans effectués par jour</h2>
+        <canvas id="scansChart" width="400" height="200"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h2>Ports ouverts par sonde</h2>
+        <canvas id="portsChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Liste des sondes -->
+    <div class="sondes-list">
+        <h2>Liste des sondes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Adresse IP</th>
+                    <th>Nom de l'hôte</th>
+                    <th>État</th>
+                    <th>Dernier scan</th>
+                    <th>Dernier ping</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sonde in sondes %}
+                <tr>
+                    <td>{{ sonde.ip_address }}</td>
+                    <td>{{ sonde.hostname }}</td>
+                    <td>
+                        {% if sonde.is_connected %}
+                            <span class="connected">Connecté</span>
+                        {% else %}
+                            <span class="disconnected">Déconnecté</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ sonde.last_scan }}</td>
+                    <td>{{ sonde.last_ping }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Graphique des scans effectués par jour
+        const scansData = {
+            labels: {{ scans_dates | tojson | safe }},
+            datasets: [{
+                label: 'Scans effectués',
+                data: {{ scans_counts | tojson | safe }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const scansCtx = document.getElementById('scansChart').getContext('2d');
+        const scansChart = new Chart(scansCtx, {
+            type: 'bar',
+            data: scansData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Graphique des ports ouverts par sonde
+        const portsData = {
+            labels: {{ sondes_labels | tojson | safe }},
+            datasets: [{
+                label: 'Ports ouverts',
+                data: {{ ports_counts | tojson | safe }},
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const portsCtx = document.getElementById('portsChart').getContext('2d');
+        const portsChart = new Chart(portsCtx, {
+            type: 'bar',
+            data: portsData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
