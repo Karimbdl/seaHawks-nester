@@ -8,7 +8,7 @@ from flask_apscheduler import APScheduler
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'votre_clé_secrète_ici'  # Clé secrète pour APScheduler (important) - **À REMPLACER !**
+app.config['SECRET_KEY'] = 'votre_clé_secrète_ici'
 
 # Configuration de la base de données SQLite
 basedir = os.path.abspath(os.path.dirname(__file__))
