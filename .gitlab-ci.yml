@@ -1,0 +1,39 @@
+image: python:3.9-slim-buster  # Image Docker pour l'environnement CI
+
+stages:
+  - test  # Étape de tests (placeholder pour l'instant)
+  - build # Étape de build (packaging)
+  - deploy # Étape de déploiement (simplifiée pour l'exemple)
+
+test_backend: # Job pour l'étape de tests du backend
+  stage: test
+  script:
+    - echo "No tests implemented yet for Seahawks Nester Backend. Tests stage placeholder."
+    - echo "Tests stage PASSED (for now, no real tests are executed)."
+
+build_backend:  # Job pour l'étape de build du backend
+  stage: build
+  script:
+    - echo "Packaging Seahawks Nester Backend..."
+    - pip install -r requirements.txt # Installer les dépendances Python
+    - apt-get update && apt-get install -y zip # Installer zip pour créer l'archive
+    - zip -r seahawks_nester_server.zip . -x "*.git*" "*.log*" "db/*" "migrations/*" # Créer archive zip, excluant .git, logs, db et migrations
+    - echo "Backend packagé dans seahawks_nester_server.zip"
+  artifacts:
+    paths:
+      - seahawks_nester_server.zip # Sauvegarder l'archive comme artifact
+    expire_in: 1 week
+
+deploy_backend:  # Job pour l'étape de déploiement (SIMPLIFIÉ - à adapter)
+  stage: deploy
+  script:
+    - echo "Déploiement simplifié du serveur (copie de l'archive)..."
+    - mkdir -p /deployments/server # Créer dossier de déploiement (exemple)
+    - cp seahawks_nester_server.zip /deployments/server/ # Copier l'archive dans le dossier de déploiement
+    - echo "Archive du serveur copiée dans /deployments/server/"
+  artifacts:
+    paths:
+      - /deployments/server/seahawks_nester_server.zip # Sauvegarder l'artifact "déployé"
+    expire_in: 1 week
+  dependencies: # Dépend de l'étape de build
+    - build_backend
