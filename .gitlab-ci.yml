@@ -36,8 +36,4 @@ deploy_backend:  # Job pour l'étape de déploiement (SIMPLIFIÉ - à adapter)
       - /deployments/server/seahawks_nester_server.zip # Sauvegarder l'artifact "déployé"
     expire_in: 1 week
   dependencies: # Dépend de l'étape de build
-<<<<<<< HEAD
     - build_backend
-=======
-    - build_backend
->>>>>>> 11fab24ea3517c4d204009d12ce25ad6c06d48aa
