@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seahawks Nester - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .login-container {
+            display: flex;
+            width: 80%; /* Adjust as needed */
+            max-width: 1200px;
+            background-color: #333; /* Card background */
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .login-left {
+            flex: 1;
+            background-image: url('{{ url_for('static', filename='images/login_bg.jpg') }}'); /* Replace with your image */
+            background-size: cover;
+            background-position: center;
+            padding: 30px;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .login-left h2 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #eee; /* White title */
+        }
+        .login-left p {
+            font-size: 1.1em;
+            color: #ccc;
+        }
+        .login-right {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .login-right h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #eee; /* White title */
+            text-align: center;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+        .login-form input {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #666;
+            background-color: #444;
+            color: #eee;
+        }
+        .login-form button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #66FFFF; /* Cyan button */
+            color: #222;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .login-form button:hover {
+            background-color: #77ffff; /* Lighter cyan on hover */
+        }
+        .login-error {
+            color: #FF4500; /* Error message color */
+            margin-bottom: 15px;
+        }
+        .social-login {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .social-login button {
+            background-color: #555; /* Grey social buttons */
+            color: #eee;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .social-login button:hover {
+            background-color: #666; /* Lighter grey on hover */
+        }
+        .signup-link {
+            text-align: center;
+            margin-top: 15px;
+            color: #ccc;
+        }
+        .signup-link a {
+            color: #66FFFF; /* Cyan link */
+            text-decoration: none;
+        }
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <h2>Seahawks Nester</h2>
+            <p>Capturing Moments, Creating Memories</p>
+            <!-- You can add an image or more text here -->
+        </div>
+        <div class="login-right">
+            <h2>Create an account</h2>
+            <p class="signup-link">Already have an account? <a href="#">Log in</a></p>
+            {% if error %}
+                <p class="login-error">{{ error }}</p>
+            {% endif %}
+            <form class="login-form" method="post">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Enter your password" required>
+                <button type="submit">Create account</button>
+            </form>
+            <div class="social-login">
+                <p>Or register with</p>
+                <button>Google</button>
+                <button>Apple</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

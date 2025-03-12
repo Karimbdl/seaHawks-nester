@@ -1,13 +1,16 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session # <-- Importer session et redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 import os
 import json
 from collections import Counter
-from flask_apscheduler import APScheduler 
+from flask_apscheduler import APScheduler
 
 
 app = Flask(__name__)
+app.secret_key = 'votre_clé_secrète_login'  # Clé secrète pour les sessions - IMPORTANT, changez ça!
+
+
 app.config['SECRET_KEY'] = 'votre_clé_secrète_ici'
 
 # Configuration de la base de données SQLite
@@ -91,19 +94,28 @@ def receive_sonde_data():
     return jsonify({"message": "Données de sonde reçues et enregistrées"}), 201
 
 # Route pour la page d'accueil avec filtres et pagination
-@app.route('/')
+@app.route('/index')
 def index():
+    if not session.get('logged_in'): # <---- AJOUTER : Protection du dashboard, nécessite login
+        return redirect(url_for('login')) # <---- AJOUTER : Redirige vers login si non connecté
+
     state_filter = request.args.get('state')
     ip_filter = request.args.get('ip')
+    search_term = request.args.get('search') # Récupérer le terme de recherche
     page = request.args.get('page', 1, type=int)
     per_page = 10
 
     query = Sonde.query
 
+    # Filtrer par état
     if state_filter == "connected":
         query = query.filter(Sonde.is_connected == True)
     elif state_filter == "disconnected":
         query = query.filter(Sonde.is_connected == False)
+
+    # Filtrer par terme de recherche (nom d'hôte ou IP)
+    if search_term:
+        query = query.filter(db.or_(Sonde.hostname.contains(search_term), Sonde.ip_address.contains(search_term)))
 
     if ip_filter:
         query = query.filter(Sonde.ip_address.contains(ip_filter))
@@ -114,6 +126,9 @@ def index():
 # Route pour le tableau de bord d'une sonde
 @app.route('/dashboard')
 def dashboard():
+    if not session.get('logged_in'): # <---- AJOUTER : Protection du dashboard, nécessite login
+        return redirect(url_for('login')) # <---- AJOUTER : Redirige vers login si non connecté
+
     sondes = Sonde.query.all()
     total_sondes = len(sondes)
     connected_sondes = Sonde.query.filter_by(is_connected=True).count()
@@ -160,6 +175,39 @@ def dashboard():
         ports_counts=ports_counts,
         sondes=sondes
     )
+
+# --- ROUTES POUR L'AUTHENTIFICATION ET LA PAGE DE LOGIN ---
+
+# Route pour la page d'accueil (AFFICHE LA PAGE LOGIN directement sur la racine '/')  <--- CHANGEMENT : Page d'accueil AFFICHE LOGIN
+@app.route('/')
+def home():
+    return render_template('login.html') # Renders login page directly
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username'] # Assumes you have a username field in your form
+        password = request.form['password'] # Assumes you have a password field
+
+        # --- BASIQUE : Hardcoded credentials - REMPLACER PAR UN VRAI SYSTEME D'AUTH PLUS TARD ---
+        if username == 'testuser' and password == 'password': # Exemple credentials
+            session['logged_in'] = True # Set a session variable to indicate login
+            return redirect(url_for('dashboard')) # Redirect to dashboard after login
+        else:
+            error = 'Invalid credentials. Please try again.' # Error message for invalid login
+            return render_template('login.html', error=error) # Render login page with error
+
+    return render_template('login.html') # Render login page for GET request
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None) # Clear the 'logged_in' session variable
+    return redirect(url_for('login')) # Redirect to login page after logout
+
+
+# --- ROUTES POUR LA CONFIGURATION DES SONDES ---
+
 
 # Démarrer l'application
 if __name__ == '__main__':

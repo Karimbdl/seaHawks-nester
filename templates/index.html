@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,14 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seahawks Nester - Accueil</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{{ url_for('index') }}">Seahawks Nester</a>
+        </div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="{{ url_for('index') }}" class="nav-link active">Sondes</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('dashboard') }}" class="nav-link">Tableau de bord</a>
+            </li>
+            <!-- Ajouter d'autres liens de navigation ici si nécessaire -->
+        </ul>
+    </nav>
+
     <header>
         <div class="header-content">
-            <h1>Seahawks Nester</h1>
-            <p>Supervisez votre réseau en temps réel</p>
-            <a href="{{ url_for('dashboard') }}" class="dashboard-button">Tableau de bord</a>
+            <h1>Liste des Sondes</h1>
+            <p>Visualisez l'état et les données de vos sondes réseau.</p>
         </div>
     </header>
 
@@ -28,13 +44,24 @@
                         <option value="disconnected">Déconnecté</option>
                     </select>
                 </div>
+                <!-- Ajout du champ de recherche -->
                 <div class="filter-group">
-                    <label for="ip">Adresse IP :</label>
+                    <label for="search">Rechercher une sonde :</label>
+                    <input type="text" name="search" id="search" placeholder="Nom d'hôte ou Adresse IP">
+                </div>
+                <div class="filter-group">
+                    <label for="ip">Filtrer par Adresse IP :</label>
                     <input type="text" name="ip" id="ip" placeholder="Filtrer par IP">
                 </div>
                 <button type="submit" class="filter-button">Filtrer</button>
             </form>
         </div>
+
+        <!-- Conteneur pour les messages d'erreur (caché par défaut) -->
+        <div id="errorMessage" class="error-message" style="display:none;"></div>
+
+        <!-- Indicateur de chargement (caché par défaut) -->
+        <div id="loadingIndicator" class="loading-indicator" style="display:none;">Chargement...</div>
 
         <!-- Cartes des sondes -->
         <div class="sondes-grid">
@@ -47,7 +74,7 @@
                     </span>
                 </div>
                 <div class="sonde-details">
-                    <p><strong>Adresse IP :</strong> {{ sonde.ip_address }}</p>
+                    <p><strong>Adresse IP :</strong> <span class="data-value">{{ sonde.ip_address }}</span></p>
                     <p><strong>Dernière activité :</strong> {{ sonde.last_seen.strftime('%Y-%m-%d %H:%M:%S') }}</p>
                     <p><strong>Dernier scan :</strong>
                         {% if sonde.last_scan %}
@@ -58,7 +85,7 @@
                                     <li>
                                         <strong>{{ host }}:</strong>
                                         {% if ports %}
-                                            Ports ouverts: {{ ports | join(', ') }}
+                                            Ports ouverts: <span class="data-value">{{ ports | join(', ') }}</span>
                                         {% else %}
                                             Aucun port ouvert détecté
                                         {% endif %}
@@ -73,6 +100,9 @@
                         {% endif %}
                     </p>
                 </div>
+                <div class="sonde-actions">
+                    <a href="#" class="action-link">Voir les détails</a> <!-- Lien "Voir les détails" -->
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -80,13 +110,13 @@
         <!-- Pagination -->
         <div class="pagination">
             {% if sondes.has_prev %}
-                <a href="{{ url_for('index', page=sondes.prev_num, state=request.args.get('state'), ip=request.args.get('ip')) }}" class="pagination-button">Précédent</a>
+                <a href="{{ url_for('index', page=sondes.prev_num, state=request.args.get('state'), ip=request.args.get('ip'), search=request.args.get('search')) }}" class="pagination-button">Précédent</a>
             {% endif %}
 
             <span class="pagination-info">Page {{ sondes.page }} sur {{ sondes.pages }}</span>
 
             {% if sondes.has_next %}
-                <a href="{{ url_for('index', page=sondes.next_num, state=request.args.get('state'), ip=request.args.get('ip')) }}" class="pagination-button">Suivant</a>
+                <a href="{{ url_for('index', page=sondes.next_num, state=request.args.get('state'), ip=request.args.get('ip'), search=request.args.get('search')) }}" class="pagination-button">Suivant</a>
             {% endif %}
         </div>
     </main>
@@ -94,5 +124,16 @@
     <footer>
         <p>© 2023 Seahawks Nester. Tous droits réservés.</p>
     </footer>
+
+    <script>
+        document.querySelector('.filters form').addEventListener('submit', function() {
+            document.getElementById('loadingIndicator').style.display = 'block'; // Afficher l'indicateur au submit
+        });
+
+        // Optionnel : Cacher l'indicateur après un certain temps (si la requête est très rapide, pour éviter un clignotement)
+        // window.addEventListener('load', function() {
+        //     setTimeout(function() { document.getElementById('loadingIndicator').style.display = 'none'; }, 500); // 500ms après le chargement complet de la page
+        // });
+    </script>
 </body>
 </html>

@@ -1,4 +1,5 @@
-/* styles.css - Version Cyberpunk */
+
+/* styles.css - Version Data Dashboard (Gris & Fonctionnel) */
 
 /* Reset CSS et Base */
 * {
@@ -8,388 +9,436 @@
 }
 
 body {
-    font-family: 'Roboto Mono', monospace; /* Police Monospace Cyberpunk */
-    background-color: #111; /* Fond Noir Charbon */
-    color: #eee; /* Texte Gris Clair */
+    font-family: 'Inter', sans-serif; /* Police Inter pour le texte général */
+    background-color: #222; /* Fond Gris Foncé */
+    color: #DDD; /* Texte Gris Clair */
     line-height: 1.6;
-    overflow-x: hidden; /* Empêcher le défilement horizontal */
+    overflow-x: hidden;
 }
 
-/* Header Cyberpunk */
+/* Header Data Dashboard */
 header {
-    background-color: #222; /* Header légèrement plus clair */
-    padding: 40px 20px;
-    text-align: center;
-    border-bottom: 2px solid #00FFFF; /* Bordure Néon Basse */
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Glow Néon */
+    background-color: #333; /* Header légèrement plus clair */
+    padding: 20px;
+    text-align: left; /* Alignement à gauche pour un look plus "dashboard" */
+    border-bottom: 1px solid #555; /* Bordure grise discrète */
+    margin-bottom: 20px; /* Marge en bas du header */
 }
 
 header h1 {
-    font-size: 2.8rem; /* Titre plus grand */
+    font-size: 1.8rem; /* Titre un peu plus petit et sobre */
     font-weight: bold;
-    letter-spacing: 2px; /* Espacement des lettres pour un look tech */
-    text-shadow: 0 0 10px #00FFFF; /* Glow sur le titre */
+    color: #DDD; /* Titre Gris Clair */
+    letter-spacing: -0.5px; /* Léger espacement négatif pour un look plus serré */
+    margin-bottom: 0; /* Pas de marge en bas du titre */
 }
 
 header p {
-    font-size: 1.2rem;
-    font-weight: 300;
-    color: #ccc; /* Paragraphe un peu plus foncé */
+    font-size: 1rem;
+    color: #AAA; /* Paragraphe Gris Moyen */
+    font-weight: normal; /* Police normale pour le paragraphe */
 }
 
-.dashboard-button {
-    display: inline-block;
-    background-color: #00FFFF; /* Bouton Néon Cyan */
-    color: #111; /* Texte foncé sur fond néon */
-    padding: 12px 25px; /* Bouton un peu plus grand */
-    border-radius: 8px;
+.dashboard-button, .filter-button, .pagination-button { /* Styles communs pour les boutons */
+    background-color: #555; /* Boutons Gris Moyen */
+    color: #DDD; /* Texte des boutons Gris Clair */
+    padding: 8px 15px; /* Padding plus petit pour des boutons plus discrets */
+    border-radius: 4px; /* Coins légèrement arrondis */
     text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 600;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Glow du bouton */
-    border: 2px solid transparent; /* Bordure transparente pour l'effet hover */
+    font-size: 0.9rem; /* Police plus petite pour les boutons */
+    font-weight: normal; /* Police normale pour les boutons */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-.dashboard-button:hover {
-    background-color: #111; /* Fond noir au survol */
-    color: #00FFFF; /* Texte néon au survol */
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); /* Glow plus intense au survol */
-    border-color: #00FFFF; /* Bordure néon au survol */
+.dashboard-button:hover, .filter-button:hover, .pagination-button:hover {
+    background-color: #777; /* Gris légèrement plus clair au survol */
+}
+
+/* Bouton Dashboard Spécifique (si nécessaire) */
+.dashboard-button {
+    display: inline-block; /* Pour header si besoin */
+    /* ... styles spécifiques si tu veux le distinguer ... */
 }
 
 
-/* Filtres Cyberpunk */
+/* Filtres Data Dashboard */
 .filters {
-    background-color: #222; /* Fond des filtres sombre */
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Ombre plus prononcée */
-    margin-bottom: 30px;
-    border: 1px solid #00FFFF; /* Bordure néon */
+    background-color: #333; /* Fond des filtres Gris Clair */
+    padding: 15px; /* Padding plus petit */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Ombre plus légère et discrète */
+    margin-bottom: 20px;
+    border: none; /* Pas de bordure */
 }
 
 .filter-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Marge plus petite entre les groupes de filtres */
 }
 
 .filter-group label {
     display: block;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #00FFFF; /* Label en néon cyan */
-    text-shadow: 0 0 5px rgba(0, 255, 255, 0.8); /* Glow du label */
+    font-weight: bold; /* Label en gras */
+    margin-bottom: 5px; /* Marge plus petite sous le label */
+    color: #DDD; /* Label Gris Clair */
+    font-size: 0.9rem; /* Police plus petite pour les labels */
 }
 
 .filter-group select,
 .filter-group input {
     width: 100%;
-    padding: 12px;
-    background-color: #333; /* Fond des inputs plus sombre */
-    color: #eee; /* Texte clair dans les inputs */
-    border: 1px solid #555; /* Bordure plus discrète */
-    border-radius: 5px;
-    font-size: 1rem;
-    font-family: 'Roboto Mono', monospace; /* Police monospace pour les inputs */
+    padding: 8px; /* Padding plus petit pour les inputs */
+    background-color: #444; /* Fond des inputs Gris un peu plus clair */
+    color: #DDD; /* Texte clair dans les inputs */
+    border: 1px solid #666; /* Bordure grise discrète */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    font-size: 0.9rem; /* Police plus petite pour les inputs */
+    font-family: 'Inter', sans-serif; /* Police Inter pour les inputs */
 }
 
 .filter-group select:focus,
 .filter-group input:focus {
-    outline: none; /* Supprimer l'outline par défaut */
-    border-color: #00FFFF; /* Bordure néon au focus */
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Glow au focus */
+    outline: none;
+    border-color: #777; /* Bordure grise plus claire au focus */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Ombre discrète au focus */
 }
 
 
-.filter-button {
-    background-color: #FF00FF; /* Bouton Filtre en magenta */
-    color: #111;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: 600;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5); /* Glow magenta */
-    border: 2px solid transparent;
-}
-
-.filter-button:hover {
-    background-color: #111;
-    color: #FF00FF;
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
-    border-color: #FF00FF;
-}
+/* Bouton Filtrer (style commun déjà défini plus haut avec .filter-button) */
 
 
-/* Grille des Cartes de Sondes Cyberpunk */
+/* Grille des Cartes de Sondes Data Dashboard */
 .sondes-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Cartes un peu plus larges */
-    gap: 25px; /* Espacement accru */
-    padding: 20px; /* Ajouter du padding autour de la grille */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Cartes un peu moins larges */
+    gap: 15px; /* Espacement plus petit entre les cartes */
+    padding: 10px; /* Padding plus petit autour de la grille */
 }
 
 .sonde-card {
-    background-color: #222; /* Fond des cartes sombre */
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Ombre prononcée */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    border: 2px solid transparent; /* Bordure transparente par défaut */
+    background-color: #333; /* Fond des cartes Gris Clair */
+    padding: 15px; /* Padding plus petit dans les cartes */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Ombre plus légère et discrète */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none; /* Pas de bordure */
 }
 
 .sonde-card:hover {
-    transform: translateY(-8px); /* Soulèvement plus marqué au survol */
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7); /* Ombre plus intense au survol */
-    border-color: #00FFFF; /* Bordure néon au survol */
+    transform: translateY(-3px); /* Soulèvement plus discret au survol */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Ombre légèrement plus marquée au survol */
 }
 
 .sonde-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px dashed #555; /* Séparation en pointillés */
-    padding-bottom: 15px;
+    margin-bottom: 10px; /* Marge plus petite sous le header de la carte */
+    border-bottom: 1px dashed #555; /* Séparation en pointillés, gris plus clair */
+    padding-bottom: 8px; /* Padding plus petit sous le header */
 }
 
 .sonde-header h2 {
-    font-size: 1.6rem; /* Titre de la carte plus grand */
+    font-size: 1.1rem; /* Titre de la carte plus petit et sobre */
     font-weight: bold;
-    color: #00FFFF; /* Titre en néon cyan */
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.8); /* Glow sur le titre de la carte */
+    color: #DDD; /* Titre Gris Clair */
+    margin-bottom: 0; /* Pas de marge en bas du titre de la carte */
 }
 
 .status-badge {
-    padding: 8px 15px;
-    border-radius: 25px; /* Badge plus arrondi */
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8); /* Ombre sur le texte du badge pour contraste */
+    padding: 6px 10px; /* Padding plus petit pour le badge */
+    border-radius: 15px; /* Badge plus arrondi */
+    font-size: 0.8rem; /* Police plus petite pour le badge */
+    font-weight: bold;
+    text-shadow: none; /* Pas d'ombre sur le texte du badge */
 }
 
 .status-badge.connected {
-    background-color: #00FF00; /* Vert cyber pour connecté */
-    color: #111;
-    box-shadow: 0 0 8px rgba(0, 255, 0, 0.8); /* Glow vert */
+    background-color: #2ECC71; /* Vert sobre pour connecté */
+    color: #FFF; /* Texte blanc pour contraste sur fond vert */
+    box-shadow: none; /* Pas d'ombre sur le badge connecté */
 }
 
 .status-badge.disconnected {
-    background-color: #FF4500; /* Rouge-orange pour déconnecté (plus cyberpunk que rouge pur) */
-    color: #eee;
-    box-shadow: 0 0 8px rgba(255, 69, 0, 0.8); /* Glow orange */
+    background-color: #E74C3C; /* Rouge sobre pour déconnecté */
+    color: #FFF; /* Texte blanc pour contraste sur fond rouge */
+    box-shadow: none; /* Pas d'ombre sur le badge déconnecté */
 }
 
 .sonde-details p {
-    margin-bottom: 12px;
-    font-size: 1.0rem;
-    color: #ccc; /* Détails en gris clair */
+    margin-bottom: 8px; /* Marge plus petite sous les paragraphes de détails */
+    font-size: 0.9rem; /* Police plus petite pour les détails */
+    color: #AAA; /* Détails en Gris Moyen */
 }
 
 .sonde-details strong {
-    color: #eee; /* Mots en gras un peu plus clairs */
+    color: #DDD; /* Mots en gras en Gris Clair */
+    font-weight: bold; /* Gras pour les mots importants */
+}
+
+.sonde-details .data-value { /* Classe pour les valeurs de données importantes (ex: IP, ports) */
+    font-family: 'Roboto Mono', monospace; /* Police Monospace pour les données */
+    font-size: 0.9rem; /* Taille identique aux autres détails */
+    color: #DDD; /* Couleur Gris Clair */
+}
+
+/* Actions de la sonde (lien "Voir les détails") */
+.sonde-actions {
+    margin-top: 15px;
+    text-align: right; /* Aligner à droite dans la carte */
+}
+
+.sonde-actions .action-link {
+    color: #777; /* Couleur du lien "Voir les détails" (gris moyen) */
+    font-size: 0.9rem;
+    text-decoration: none; /* Pas de soulignement */
+    transition: color 0.2s ease;
 }
 
 
-/* Pagination Cyberpunk */
+/* Pagination Data Dashboard */
 .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 30px;
-    margin-bottom: 30px; /* Ajout de marge en bas */
+    margin-top: 20px; /* Marge plus petite au-dessus de la pagination */
+    margin-bottom: 20px; /* Marge plus petite en bas de la pagination */
 }
 
-.pagination-button {
-    background-color: #00FFFF; /* Boutons de pagination en cyan */
-    color: #111;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin: 0 8px; /* Espacement légèrement plus grand */
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-    border: 2px solid transparent;
-}
-
-.pagination-button:hover {
-    background-color: #111;
-    color: #00FFFF;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-    border-color: #00FFFF;
-}
+/* Boutons Pagination (style commun déjà défini plus haut avec .pagination-button) */
 
 
 .pagination-info {
+    font-size: 0.9rem; /* Police plus petite pour l'info de pagination */
+    margin: 0 10px; /* Espacement plus petit */
+    color: #AAA; /* Info de pagination en Gris Moyen */
+}
+
+/* Message d'erreur */
+.error-message {
+    background-color: #F2DEDE; /* Fond rouge clair */
+    color: #C0392B; /* Texte rouge foncé */
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Indicateur de chargement */
+.loading-indicator {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
     font-size: 1rem;
-    margin: 0 15px; /* Espacement plus grand */
-    color: #ccc; /* Info de pagination en gris clair */
+    color: #DDD; /* Couleur du texte de chargement */
 }
 
 
-/* Tableau de Bord Cyberpunk */
+/* Tableau de Bord Data Dashboard */
 .dashboard-container {
-    padding: 20px;
+    padding: 15px; /* Padding plus petit pour le container du dashboard */
 }
 
 .stats-container {
     display: flex;
-    justify-content: space-around; /* Répartition plus espacée des stats */
-    margin-top: 30px;
-    margin-bottom: 40px; /* Marge plus grande en bas des stats */
+    justify-content: space-around;
+    margin-top: 20px; /* Marge plus petite au-dessus des stats */
+    margin-bottom: 30px; /* Marge plus petite en bas des stats */
 }
 
 .stat-card {
-    background-color: #222;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    width: 24%; /* Ajuster légèrement la largeur des cartes de stats */
+    background-color: #333; /* Fond des cartes de stats Gris Clair */
+    padding: 15px; /* Padding plus petit dans les cartes de stats */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Ombre plus légère et discrète */
+    width: 24%; /* Largeur des cartes de stats */
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    border: 2px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none; /* Pas de bordure */
 }
 
 .stat-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
-    border-color: #FF00FF; /* Bordure magenta au survol des stats */
+    transform: translateY(-3px); /* Soulèvement plus discret au survol */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* Ombre légèrement plus marquée au survol */
 }
 
 .stat-card h2 {
-    font-size: 1.3rem; /* Titre des stats un peu plus grand */
-    color: #FF00FF; /* Titre des stats en magenta */
-    margin-bottom: 15px;
-    text-shadow: 0 0 8px rgba(255, 0, 255, 0.8); /* Glow magenta sur le titre des stats */
+    font-size: 1rem; /* Titre des stats plus petit et sobre */
+    color: #DDD; /* Titre des stats en Gris Clair */
+    margin-bottom: 10px; /* Marge plus petite sous le titre des stats */
+    font-weight: bold; /* Titre des stats en gras */
+    text-shadow: none; /* Pas d'ombre sur le titre des stats */
 }
 
 .stat-value {
-    font-size: 2.2rem; /* Valeur des stats plus grande */
+    font-size: 1.8rem; /* Valeur des stats un peu plus petite */
     font-weight: bold;
-    color: #eee;
-    margin: 15px 0;
+    color: #EEE; /* Valeur des stats en Gris Très Clair */
+    margin: 10px 0; /* Marge plus petite autour de la valeur des stats */
 }
 
 .stat-change {
-    font-size: 0.9rem;
-    color: #aaa; /* Texte de changement plus foncé */
+    font-size: 0.8rem; /* Police plus petite pour le texte de changement */
+    color: #AAA; /* Texte de changement en Gris Moyen */
 }
 
-.chart-container {
-    background-color: #222;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    margin-top: 30px;
-    margin-bottom: 30px; /* Ajout de marge en bas des graphiques */
-    border: 1px solid #00FFFF; /* Bordure néon pour les graphiques */
+.chart-container, .sondes-list { /* Styles communs pour les containers de graphiques et listes */
+    background-color: #333; /* Fond des containers Gris Clair */
+    padding: 15px; /* Padding plus petit */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Ombre plus légère et discrète */
+    margin-top: 20px; /* Marge plus petite au-dessus des containers */
+    margin-bottom: 20px; /* Marge plus petite en bas des containers */
+    border: none; /* Pas de bordure */
 }
 
-.chart-container h2 {
-    font-size: 1.3rem; /* Titre des graphiques plus grand */
-    color: #00FFFF; /* Titre des graphiques en cyan */
-    margin-bottom: 25px;
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.8); /* Glow cyan sur le titre des graphiques */
-    text-align: center; /* Titre du graphique centré */
+.chart-container h2, .sondes-list h2 { /* Styles communs pour les titres des containers */
+    font-size: 1.1rem; /* Titre des containers plus petit et sobre */
+    color: #DDD; /* Titre des containers en Gris Clair */
+    margin-bottom: 15px; /* Marge plus petite sous le titre des containers */
+    font-weight: bold; /* Titre des containers en gras */
+    text-align: left; /* Titre aligné à gauche pour un look dashboard */
+    text-shadow: none; /* Pas d'ombre sur les titres des containers */
 }
 
-/* Style pour la liste des sondes dans le tableau de bord */
-.sondes-list {
-    background-color: #222;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    margin-top: 30px;
-    border: 1px solid #00FFFF; /* Bordure néon pour la liste des sondes */
-}
 
-.sondes-list h2 {
-    font-size: 1.3rem; /* Titre de la liste de sondes plus grand */
-    color: #00FFFF; /* Titre de la liste de sondes en cyan */
-    margin-bottom: 25px;
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.8); /* Glow cyan sur le titre de la liste de sondes */
-    text-align: center; /* Titre de la liste de sondes centré */
-}
+/* Style pour la liste des sondes dans le tableau de bord (sondes-list) - Styles communs déjà définis au-dessus */
+
 
 table {
     width: 100%;
     border-collapse: collapse;
-    border-spacing: 0; /* Supprimer l'espacement par défaut des cellules */
+    border-spacing: 0;
+    font-size: 0.9rem; /* Police plus petite pour le tableau */
 }
 
 th, td {
-    padding: 12px 15px; /* Padding plus confortable */
-    border-bottom: 1px solid #444; /* Lignes horizontales plus discrètes */
+    padding: 8px 12px; /* Padding plus petit dans les cellules du tableau */
+    border-bottom: 1px solid #555; /* Lignes horizontales plus discrètes */
     text-align: left;
-    font-size: 1rem;
+    font-family: 'Inter', sans-serif; /* Police Inter pour le texte du tableau (sauf données) */
+    color: #DDD; /* Texte du tableau en Gris Clair */
 }
 
 th {
-    background-color: #333; /* En-tête de tableau plus sombre */
-    color: #00FFFF; /* Texte de l'en-tête en néon cyan */
+    cursor: pointer; /* Curseur "pointer" au survol des en-têtes de tableau triables */
+    user-select: none; /* Empêcher la sélection de texte dans les en-têtes */
+    position: relative; /* Pour positionner les indicateurs de tri */
+    padding-right: 25px; /* Espace pour l'indicateur de tri */
+    background-color: #444; /* En-tête de tableau un peu plus clair */
+    color: #DDD; /* Texte de l'en-tête en Gris Clair */
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(0, 255, 255, 0.8); /* Glow sur l'en-tête du tableau */
+    text-shadow: none; /* Pas d'ombre sur l'en-tête du tableau */
+    font-size: 0.9rem; /* Police plus petite pour l'en-tête */
+}
+
+th:after { /* Indicateur de tri par défaut (triangle vers le bas) */
+    content: "\\25B2"; /* Unicode triangle pointant vers le bas */
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%) rotate(180deg);
+    opacity: 0.5; /* Opacité légère par défaut */
+    font-size: 0.8em;
+}
+
+th.asc:after { /* Indicateur de tri ascendant (triangle vers le haut) */
+    content: "\\25B2"; /* Unicode triangle pointant vers le haut */
+    opacity: 1; /* Opacité pleine pour le tri actif */
+    transform: translateY(-50%) rotate(0deg);
+}
+
+th.desc:after { /* Indicateur de tri descendant (triangle vers le bas) */
+    content: "\\25B2"; /* Unicode triangle pointant vers le bas */
+    opacity: 1; /* Opacité pleine pour le tri actif */
+    transform: translateY(-50%) rotate(180deg);
+}
+
+
+td.data-column { /* Classe pour les colonnes de données (ex: IP, scan, ping) */
+    font-family: 'Roboto Mono', monospace; /* Police Monospace pour les données du tableau */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #2a2a2a; /* Lignes paires légèrement différentes */
+    background-color: #3a3a3a; /* Lignes paires légèrement différentes */
 }
 
 .connected {
-    color: #00FF00; /* Vert cyber pour l'état connecté */
+    color: #2ECC71; /* Vert sobre pour l'état connecté */
     font-weight: bold;
 }
 
 .disconnected {
-    color: #FF4500; /* Rouge-orange pour l'état déconnecté */
+    color: #E74C3C; /* Rouge sobre pour l'état déconnecté */
     font-weight: bold;
 }
 
 
-/* Footer Cyberpunk */
+/* Footer Data Dashboard */
 footer {
-    background-color: #222;
-    color: #ccc;
+    background-color: #333;
+    color: #AAA;
     text-align: center;
-    padding: 20px;
-    margin-top: 50px; /* Marge plus grande au-dessus du footer */
-    border-top: 2px solid #00FFFF; /* Bordure néon haute */
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); /* Glow néon */
+    padding: 15px; /* Padding plus petit pour le footer */
+    margin-top: 30px; /* Marge plus petite au-dessus du footer */
+    border-top: 1px solid #555; /* Bordure grise discrète haute */
+    font-size: 0.9rem; /* Police plus petite pour le footer */
 }
 
 footer p {
-    font-size: 1rem;
+    font-size: inherit; /* Hérite de la taille de police du footer */
 }
 
-/* Styles spécifiques pour Chart.js pour un look Cyberpunk */
-.chartjs-render-monitor { /* Cibler les canvas Chart.js */
-    background-color: #1a1a1a; /* Fond sombre pour les graphiques */
-    border-radius: 8px;
-    padding: 15px;
+/* Styles spécifiques pour Chart.js pour un look Data Dashboard */
+.chartjs-render-monitor {
+    background-color: #444; /* Fond sombre pour les graphiques, un peu plus clair que le fond principal */
+    border-radius: 4px; /* Coins légèrement arrondis */
+    padding: 10px; /* Padding plus petit pour les graphiques */
 }
 
 /* Personnalisation des couleurs des graphiques Chart.js (optionnel, à ajuster dans le JS si nécessaire) */
-/* Exemple : dans le script JS, vous pouvez définir des options pour les couleurs comme ceci :
-options: {
-    scales: {
-        y: {
-            beginAtZero: true,
-            ticks: { color: '#eee' }, // Texte des axes en clair
-            grid: { color: '#444' }   // Grille en gris foncé
-        },
-        x: {
-            ticks: { color: '#eee' },
-            grid: { color: '#444' }
-        }
-    },
-    plugins: {
-        legend: {
-            labels: { color: '#eee' } // Légende en clair
-        }
-    }
+/* ... options Chart.js ... */
+
+/* --- Barre de Navigation (Navbar) --- */
+.navbar {
+    background-color: #333; /* Fond de la navbar Gris Clair */
+    padding: 10px 20px; /* Padding plus petit pour la navbar */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #555; /* Séparation discrète en bas */
+    margin-bottom: 20px; /* Marge en bas de la navbar */
+    border-radius: 4px; /* Coins légèrement arrondis pour la navbar */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Ombre légère pour la navbar */
 }
-*/
+
+.navbar-brand a {
+    color: #EEE; /* Couleur du titre de la marque en Gris Très Clair */
+    font-size: 1.3rem; /* Titre de la marque un peu plus petit */
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.navbar-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.nav-item {
+    margin-left: 15px; /* Espacement plus petit entre les items de navigation */
+}
+
+.nav-link {
+    color: #CCC; /* Couleur des liens de navigation en Gris Moyen */
+    text-decoration: none;
+    padding: 6px 10px; /* Padding plus petit pour les liens de navigation */
+    border-radius: 4px; /* Coins légèrement arrondis pour les liens de navigation */
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: #444; /* Fond légèrement plus clair au survol/actif */
+    color: #EEE; /* Texte en Gris Très Clair au survol/actif */
+}

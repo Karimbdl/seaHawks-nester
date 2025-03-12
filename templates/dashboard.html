@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -6,77 +7,105 @@
     <title>Tableau de bord - Seahawks Nester</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Tableau de bord - Seahawks Nester</h1>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="{{ url_for('index') }}">Seahawks Nester</a>
+        </div>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a href="{{ url_for('index') }}" class="nav-link">Sondes</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('dashboard') }}" class="nav-link active">Tableau de bord</a>
+            </li>
+            <!-- Ajouter d'autres liens de navigation ici si nécessaire -->
+        </ul>
+    </nav>
 
-    <!-- Cartes de statistiques -->
-    <div class="stats-container">
-        <div class="stat-card">
-            <h2>Scans effectués</h2>
+    <header>
+        <div class="header-content">
+            <h1>Tableau de bord</h1>
+            <p>Vue d'ensemble de l'activité et de l'état du réseau.</p>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+        <!-- Cartes de statistiques -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h2>Scans effectués</h2>
             <p class="stat-value">{{ total_scans }}</p>
-            <p class="stat-change">(Dernier scan : {{ last_scan_time }})</p>
+                <p class="stat-change">(Dernier scan : {{ last_scan_time }})</p>
+            </div>
+            <div class="stat-card">
+                <h2>Sondes connectées</h2>
+                <p class="stat-value">{{ connected_sondes }}</p>
+                <p class="stat-change">(Total : {{ total_sondes }})</p>
+            </div>
+            <div class="stat-card">
+                <h2>Ports ouverts</h2>
+                <p class="stat-value">{{ total_open_ports }}</p>
+                <p class="stat-change">(Dernier scan : {{ last_scan_time }})</p>
+            </div>
+            <div class="stat-card">
+                <h2>Latence moyenne</h2>
+                <p class="stat-value">{{ average_ping }} ms</p>
+                <p class="stat-change">(Dernier ping : {{ last_ping_time }})</p>
+            </div>
         </div>
-        <div class="stat-card">
-            <h2>Sondes connectées</h2>
-            <p class="stat-value">{{ connected_sondes }}</p>
-            <p class="stat-change">(Total : {{ total_sondes }})</p>
-        </div>
-        <div class="stat-card">
-            <h2>Ports ouverts</h2>
-            <p class="stat-value">{{ total_open_ports }}</p>
-            <p class="stat-change">(Dernier scan : {{ last_scan_time }})</p>
-        </div>
-        <div class="stat-card">
-            <h2>Latence moyenne</h2>
-            <p class="stat-value">{{ average_ping }} ms</p>
-            <p class="stat-change">(Dernier ping : {{ last_ping_time }})</p>
-        </div>
-    </div>
 
-    <!-- Graphiques -->
-    <div class="chart-container">
-        <h2>Scans effectués par jour</h2>
-        <canvas id="scansChart" width="400" height="200"></canvas>
-    </div>
+        <!-- Graphiques -->
+        <div class="chart-container">
+            <h2>Scans effectués par jour</h2>
+            <canvas id="scansChart" width="400" height="200"></canvas>
+        </div>
 
-    <div class="chart-container">
-        <h2>Ports ouverts par sonde</h2>
-        <canvas id="portsChart" width="400" height="200"></canvas>
-    </div>
+        <div class="chart-container">
+            <h2>Ports ouverts par sonde</h2>
+            <canvas id="portsChart" width="400" height="200"></canvas>
+        </div>
 
-    <!-- Liste des sondes -->
-    <div class="sondes-list">
-        <h2>Liste des sondes</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Adresse IP</th>
-                    <th>Nom de l'hôte</th>
-                    <th>État</th>
-                    <th>Dernier scan</th>
-                    <th>Dernier ping</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sonde in sondes %}
-                <tr>
-                    <td>{{ sonde.ip_address }}</td>
-                    <td>{{ sonde.hostname }}</td>
-                    <td>
-                        {% if sonde.is_connected %}
-                            <span class="connected">Connecté</span>
-                        {% else %}
-                            <span class="disconnected">Déconnecté</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ sonde.last_scan }}</td>
-                    <td>{{ sonde.last_ping }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        <!-- Liste des sondes -->
+        <div class="sondes-list">
+            <h2>Liste des sondes</h2>
+            <table id="sondesTable">
+                <thead>
+                    <tr>
+                        <th>Adresse IP</th>
+                        <th>Nom de l'hôte</th>
+                        <th>État</th>
+                        <th>Dernier scan</th>
+                        <th>Dernier ping</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sonde in sondes %}
+                    <tr>
+                        <td class="data-column">{{ sonde.ip_address }}</td>
+                        <td>{{ sonde.hostname }}</td>
+                        <td>
+                            {% if sonde.is_connected %}
+                                <span class="connected">Connecté</span>
+                            {% else %}
+                                <span class="disconnected">Déconnecté</span>
+                            {% endif %}
+                        </td>
+                        <td class="data-column">{{ sonde.last_scan }}</td>
+                        <td class="data-column">{{ sonde.last_ping }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2023 Seahawks Nester. Tous droits réservés.</p>
+    </footer>
 
     <script>
         // Graphique des scans effectués par jour
@@ -99,20 +128,20 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: { color: '#eee' }, // Texte de l'axe Y en clair
-                        grid: { color: '#444' }   // Grille de l'axe Y en gris foncé
+                        ticks: { color: '#DDD' }, // Texte de l'axe Y en Gris Clair
+                        grid: { color: '#555' }   // Grille de l'axe Y en Gris Moyen Foncé
                     },
                     x: {
-                        ticks: { color: '#eee' }, // Texte de l'axe X en clair
-                        grid: { color: '#444' }   // Grille de l'axe X en gris foncé
+                        ticks: { color: '#DDD' }, // Texte de l'axe X en Gris Clair
+                        grid: { color: '#555' }   // Grille de l'axe X en Gris Moyen Foncé
                     }
                 },
                 plugins: {
                     legend: {
-                        labels: { color: '#eee' } // Légende en clair
+                        labels: { color: '#DDD' } // Légende en Gris Clair
                     }
                 },
-                backgroundColor: '#1a1a1a' // Fond du graphique (peut être redondant avec le CSS, mais assure la cohérence)
+                backgroundColor: '#444' // Fond du graphique en Gris un peu plus clair
             }
         });
 
@@ -135,11 +164,61 @@
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: { color: '#DDD' }, // Texte de l'axe Y en Gris Clair
+                        grid: { color: '#555' }   // Grille de l'axe Y en Gris Moyen Foncé
+                    },
+                    x: {
+                        ticks: { color: '#DDD' }, // Texte de l'axe X en Gris Clair
+                        grid: { color: '#555' }   // Grille de l'axe X en Gris Moyen Foncé
                     }
-                }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#DDD' } // Légende en Gris Clair
+                    }
+                },
+                backgroundColor: '#444' // Fond du graphique en Gris un peu plus clair
             }
         });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = document.getElementById('sondesTable');
+            const headers = table.querySelectorAll('th');
+
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.cellIndex;
+                    const isAscending = header.classList.contains('asc') ? false : true;
+
+                    sortTable(table, column, isAscending);
+
+                    // Mise à jour des classes pour indiquer l'état du tri (optionnel, juste visuel)
+                    headers.forEach(h => h.classList.remove('asc', 'desc'));
+                    header.classList.add(isAscending ? 'asc' : 'desc');
+                });
+            });
+        });
+
+        function sortTable(table, column, isAscending) {
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            const sortedRows = rows.sort((rowA, rowB) => {
+                const cellA = rowA.querySelectorAll('td')[column].textContent.trim();
+                const cellB = rowB.querySelectorAll('td')[column].textContent.trim();
+
+                if (isAscending) {
+                    return cellA.localeCompare(cellB, undefined, {numeric: true, sensitivity: 'base'}); // Tri ascendant (alphanumérique)
+                } else {
+                    return cellB.localeCompare(cellA, undefined, {numeric: true, sensitivity: 'base'}); // Tri descendant (alphanumérique)
+                }
+            });
+
+            tbody.innerHTML = ''; // Vide le tbody
+            sortedRows.forEach(row => tbody.appendChild(row)); // Ajoute les lignes triées
+        }
     </script>
 </body>
 </html>
