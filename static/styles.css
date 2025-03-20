@@ -301,6 +301,30 @@ header p {
     text-shadow: none; /* Pas d'ombre sur les titres des containers */
 }
 
+/* --- Style pour la grille des graphiques (2 colonnes) --- */
+.charts-grid {
+    display: grid; /* Utiliser CSS Grid */
+    grid-template-columns: repeat(2, 1fr); /* 2 colonnes de largeur égale */
+    gap: 20px; /* Espacement entre les graphiques */
+    padding: 10px; /* Padding intérieur de la grille */
+}
+
+.chart-container {
+    /* Les styles existants pour .chart-container restent, mais on peut ajuster des choses si besoin */
+    margin-bottom: 0; /* Supprimer la marge en bas des chart-container individuels, car l'espacement est géré par la grille */
+}
+
+.chart-container h2 {
+    font-size: 1rem; /* Réduire un peu la taille des titres des graphiques si besoin */
+    margin-bottom: 10px; /* Réduire la marge sous les titres des graphiques */
+}
+
+.chart-container canvas {
+    width: 100% !important; /* Important pour que Chart.js remplisse la largeur du container */
+    height: auto !important; /* Important pour que Chart.js ajuste la hauteur automatiquement */
+    max-height: 150px; /* Limite la hauteur maximale si besoin */
+}
+/* --- Fin Style pour la grille des graphiques (2 colonnes) --- */
 
 /* Style pour la liste des sondes dans le tableau de bord (sondes-list) - Styles communs déjà définis au-dessus */
 
@@ -442,3 +466,30 @@ footer p {
     background-color: #444; /* Fond légèrement plus clair au survol/actif */
     color: #EEE; /* Texte en Gris Très Clair au survol/actif */
 }
+
+/* --- Style pour la scrollbar personnalisée --- */
+::-webkit-scrollbar {
+    width: 12px; /* Largeur de la scrollbar */
+    background-color: #333; /* Fond de la scrollbar (gris foncé) */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #66FFFF; /* Couleur du "thumb" (partie mobile) - cyan */
+    border-radius: 10px; /* Coins arrondis pour le thumb */
+    border: 2px solid #333; /* Bordure du thumb (gris foncé, pour contraste) */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #77ffff; /* Couleur du thumb au survol (cyan plus clair) */
+}
+
+::-webkit-scrollbar-track {
+    background-color: #222; /* Couleur du "track" (rail de la scrollbar) - gris très foncé */
+    border-radius: 10px; /* Coins arrondis pour le track */
+    margin: 5px; /* Marge intérieure du track */
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent; /* Couleur du coin inférieur droit (si scroll horizontal et vertical) - transparent */
+}
+/* --- Fin Style pour la scrollbar personnalisée --- */
