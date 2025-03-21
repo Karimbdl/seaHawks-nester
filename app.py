@@ -290,18 +290,18 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username'] # Assumes you have a username field in your form
-        password = request.form['password'] # Assumes you have a password field
+        username = request.form['username'] 
+        password = request.form['password'] 
 
-        # --- BASIQUE : Hardcoded credentials - REMPLACER PAR UN VRAI SYSTEME D'AUTH PLUS TARD ---
-        if username == 'testuser' and password == 'password': # Exemple credentials
-            session['logged_in'] = True # Set a session variable to indicate login
-            return redirect(url_for('dashboard')) # Redirect to dashboard after login
+        
+        if username == 'testuser' and password == 'password': 
+            session['logged_in'] = True 
+            return redirect(url_for('dashboard')) 
         else:
-            error = 'Invalid credentials. Please try again.' # Error message for invalid login
-            return render_template('login.html', error=error) # Render login page with error
+            error = 'Invalid credentials. Please try again.' 
+            return render_template('login.html', error=error) 
 
-    return render_template('login.html') # Render login page for GET request
+    return render_template('login.html') 
 
 @app.route('/logout')
 def logout():
